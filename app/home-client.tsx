@@ -147,15 +147,6 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return <button className="back-button" onClick={onClick}><span aria-hidden="true">‹</span> 返回首页</button>;
 }
 
-function Notice() {
-  return (
-    <div className="notice" role="note">
-      <span className="notice-mark" aria-hidden="true">娱</span>
-      <div><strong>娱乐资料说明</strong><p>以下内容由固定规则随机生成，不代表真实预测能力，请理性阅读。</p></div>
-    </div>
-  );
-}
-
 function MysteryArtwork({ forecast, expanded = false }: { forecast: DailyForecast; expanded?: boolean }) {
   const animals = forecast.zodiacs.slice(0, 3).map((index) => zodiacAnimals[index]);
   return (
@@ -196,7 +187,6 @@ function HomeView({ latest, forecast, navigate, openImage }: { latest: DrawResul
 
       <section className="card forecast-card" id="forecast">
         <SectionHeader eyebrow="每日固定 · 隔日更新" title="今日参考资料" action={<span className="seed-date">{forecast.dateText}</span>} />
-        <Notice />
         <div className="forecast-block">
           <h3><span className="tiny-icon">肖</span> 今日生肖参考</h3>
           <div className="zodiac-picks">
@@ -250,7 +240,7 @@ function ZodiacView({ onBack }: { onBack: () => void }) {
 
 function ForecastView({ forecast, onBack }: { forecast: DailyForecast; onBack: () => void }) {
   const sources = ["金算盘", "老码书", "福星堂", "六合先生", "好运婆婆"];
-  return <section className="card page-card"><BackButton onClick={onBack} /><SectionHeader eyebrow={forecast.dateText} title="今日完整资料" /><Notice /><div className="detail-group"><h3>生肖参考</h3><div className="zodiac-picks">{forecast.zodiacs.map((index) => <span className="zodiac-pill" key={index}><i>{zodiacAnimals[index].emoji}</i><b>{zodiacAnimals[index].name}</b></span>)}</div></div><div className="detail-group"><h3>六肖参考</h3><p className="large-copy">{forecast.six.map((index) => zodiacAnimals[index].name).join(" · ")}</p></div><div className="detail-group"><h3>八码参考</h3><div className="mini-balls">{forecast.eight.map((number) => <Ball key={number} value={number} compact />)}</div></div><div className="detail-group"><h3>特码参考</h3><div className="mini-balls">{forecast.specials.map((number) => <Ball key={number} value={number} compact />)}</div></div><div className="forecast-summary"><div><span>波色参考</span><strong>{forecast.wave}</strong></div><div><span>尾数参考</span><strong>{forecast.tails.join(" · ")}</strong></div></div><h3 className="subheading">多份资料互相参考</h3><div className="source-list">{sources.map((source, sourceIndex) => <div key={source}><b>{source}</b><span>{forecast.six.slice(sourceIndex % 3, sourceIndex % 3 + 3).map((index) => zodiacAnimals[index].name).join(" · ")}</span></div>)}</div></section>;
+  return <section className="card page-card"><BackButton onClick={onBack} /><SectionHeader eyebrow={forecast.dateText} title="今日完整资料" /><div className="detail-group"><h3>生肖参考</h3><div className="zodiac-picks">{forecast.zodiacs.map((index) => <span className="zodiac-pill" key={index}><i>{zodiacAnimals[index].emoji}</i><b>{zodiacAnimals[index].name}</b></span>)}</div></div><div className="detail-group"><h3>六肖参考</h3><p className="large-copy">{forecast.six.map((index) => zodiacAnimals[index].name).join(" · ")}</p></div><div className="detail-group"><h3>八码参考</h3><div className="mini-balls">{forecast.eight.map((number) => <Ball key={number} value={number} compact />)}</div></div><div className="detail-group"><h3>特码参考</h3><div className="mini-balls">{forecast.specials.map((number) => <Ball key={number} value={number} compact />)}</div></div><div className="forecast-summary"><div><span>波色参考</span><strong>{forecast.wave}</strong></div><div><span>尾数参考</span><strong>{forecast.tails.join(" · ")}</strong></div></div><h3 className="subheading">多份资料互相参考</h3><div className="source-list">{sources.map((source, sourceIndex) => <div key={source}><b>{source}</b><span>{forecast.six.slice(sourceIndex % 3, sourceIndex % 3 + 3).map((index) => zodiacAnimals[index].name).join(" · ")}</span></div>)}</div></section>;
 }
 
 function MysteryView({ forecast, onBack, openImage }: { forecast: DailyForecast; onBack: () => void; openImage: () => void }) {

@@ -17,6 +17,8 @@ test("SafeMark6 product UI replaces the starter preview", async () => {
   assert.match(client, /最新开奖记录|今日参考资料|十二生肖号码表/);
   assert.doesNotMatch(client, /安心提示/);
   assert.doesNotMatch(client, /brand-mark/);
+  assert.doesNotMatch(client, /娱乐资料说明/);
+  assert.doesNotMatch(client, /以下内容由固定规则随机生成/);
   assert.match(client, /localStorage/);
   assert.equal(JSON.parse(manifest).display, "standalone");
   assert.match(worker, /Content-Security-Policy/);
