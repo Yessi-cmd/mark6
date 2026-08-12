@@ -47,6 +47,8 @@ test("live results are refreshed from the same origin without stale caching", as
   assert.match(page, /results\.json/);
   assert.match(client, /fetch\("\/data\/results\.json"/);
   assert.match(client, /cache: "no-store"/);
+  assert.match(client, /service-worker\.js\?v=2/);
+  assert.match(client, /updateViaCache: "none"/);
   assert.match(serviceWorker, /safemark6-v2/);
   assert.match(caddy, /@results path \/data\/results\.json/);
   assert.match(caddy, /no-store/);

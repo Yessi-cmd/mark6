@@ -298,7 +298,11 @@ export function HomeClient({ initialResults }: { initialResults: DrawResult[] })
   }, []);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/service-worker.js").catch(() => undefined);
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.js?v=2", { updateViaCache: "none" })
+        .catch(() => undefined);
+    }
   }, []);
 
   useEffect(() => {
