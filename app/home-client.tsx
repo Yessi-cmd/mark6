@@ -323,10 +323,9 @@ export function HomeClient({ initialResults }: { initialResults: DrawResult[] })
     <div className="site-shell">
       <header className="site-header">
         <div className="header-inner">
-          <button className="brand" onClick={() => navigate("home")} aria-label="返回天天好彩首页"><span className="brand-mark" aria-hidden="true"><i /><b>安</b></span><span className="brand-copy"><strong>天天好彩</strong><small>六合资料 · 安心阅读</small></span></button>
+          <button className="brand" onClick={() => navigate("home")} aria-label="返回天天好彩首页"><span className="brand-copy"><strong>天天好彩</strong><small>六合资料 · 安心阅读</small></span></button>
           <div className="font-control" aria-label="字体大小"><span>字号</span><button className={fontSize === "large" ? "active" : ""} onClick={() => setFontSize("large")} aria-pressed={fontSize === "large"}>大</button><button className={fontSize === "xlarge" ? "active" : ""} onClick={() => setFontSize("xlarge")} aria-pressed={fontSize === "xlarge"}>特大</button></div>
         </div>
-        <div className="safety-line"><span aria-hidden="true">✓</span><strong>安心提示</strong><p>仅供娱乐参考，不提供投注、充值或交易服务</p></div>
       </header>
 
       <main>
