@@ -1,0 +1,18 @@
+[Unit]
+Description=Synchronise validated SafeMark6 draw results
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=caddy
+Group=caddy
+ExecStart=/usr/bin/python3 /usr/local/lib/safemark6/sync_official_results.py --last-n 30 --output /var/www/mark6.norliva.top/current/data/results.json
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/www/mark6.norliva.top
+
+[Install]
+WantedBy=multi-user.target

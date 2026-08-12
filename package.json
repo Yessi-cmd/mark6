@@ -10,7 +10,9 @@
     "build": "vinext build",
     "export:static": "node scripts/export-static.mjs",
     "start": "vinext start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs",
+    "test": "npm run build && node --test tests/rendered-html.test.mjs && npm run test:data",
+    "test:data": "python3 -m unittest tests/test_sync_official_results.py",
+    "sync:results": "python3 scripts/sync_official_results.py --last-n 30",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate"
   },

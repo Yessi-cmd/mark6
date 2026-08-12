@@ -1,5 +1,5 @@
-const CACHE_NAME = "safemark6-v1";
-const APP_SHELL = ["/", "/manifest.webmanifest", "/icon.svg"];
+const CACHE_NAME = "safemark6-v2";
+const APP_SHELL = ["/", "/data/results.json", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
@@ -16,6 +16,17 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) return;
   const request = event.request;
+  if (new URL(request.url).pathname === "/data/results.json") {
+    event.respondWith(
+      fetch(request, { cache: "no-store" }).then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        return response;
+      }).catch(() => caches.match(request))
+    );
+    return;
+  }
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request).then((response) => {

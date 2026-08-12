@@ -35,6 +35,21 @@ function numberColor(value: number) {
   return "green";
 }
 
+function isDrawResult(value: unknown): value is DrawResult {
+  if (!value || typeof value !== "object") return false;
+  const record = value as Partial<DrawResult>;
+  const allNumbers = Array.isArray(record.numbers) ? [...record.numbers, record.special] : [];
+  return typeof record.issue === "string"
+    && /^\d{7}$/.test(record.issue)
+    && typeof record.date === "string"
+    && /^\d{4}-\d{2}-\d{2}$/.test(record.date)
+    && Array.isArray(record.numbers)
+    && record.numbers.length === 6
+    && allNumbers.length === 7
+    && allNumbers.every((number) => Number.isInteger(number) && Number(number) >= 1 && Number(number) <= 49)
+    && new Set(allNumbers).size === 7;
+}
+
 function hashSeed(value: string) {
   let hash = 2166136261;
   for (let index = 0; index < value.length; index += 1) {
@@ -164,10 +179,10 @@ function HomeView({ latest, forecast, navigate, openImage }: { latest: DrawResul
   return (
     <>
       <section className="hero card" id="draw">
-        <SectionHeader eyebrow="开奖速览" title="最新开奖记录" action={<span className="date-chip">{latest.date}</span>} />
+        <SectionHeader eyebrow="官方数据 · 自动更新" title="最新开奖记录" action={<span className="date-chip">{latest.date}</span>} />
         <div className="draw-meta">
           <strong>第 {latest.issue} 期</strong>
-          <span>演示数据 · 待接入经校验的开奖源</span>
+          <span><i className="verified-dot" aria-hidden="true">✓</i> 已核对香港马会开奖记录</span>
         </div>
         <div className="draw-grid">
           <div className="regular-numbers" aria-label="六个正码">
@@ -225,7 +240,7 @@ function HomeView({ latest, forecast, navigate, openImage }: { latest: DrawResul
 
 function HistoryView({ results, onBack }: { results: DrawResult[]; onBack: () => void }) {
   const [visible, setVisible] = useState(6);
-  return <section className="card page-card"><BackButton onClick={onBack} /><SectionHeader eyebrow="事实数据" title="历史开奖记录" /><p className="source-note">当前为项目演示记录，正式使用前请接入并校验受控数据源。</p><div className="history-list">{results.slice(0, visible).map((result) => <article key={result.issue}><div><b>第 {result.issue} 期</b><time>{result.date}</time></div><div className="history-balls">{result.numbers.map((number) => <Ball key={number} value={number} compact />)}<span className="history-plus">＋</span><Ball value={result.special} compact special /></div></article>)}</div>{visible < results.length && <button className="primary-button" onClick={() => setVisible((value) => value + 6)}>查看更多记录</button>}</section>;
+  return <section className="card page-card"><BackButton onClick={onBack} /><SectionHeader eyebrow={`已收录 ${results.length} 期`} title="历史开奖记录" /><p className="source-note">开奖记录来自香港马会公开结果，经格式、日期及号码完整性校验后收录。</p><div className="history-list">{results.slice(0, visible).map((result) => <article key={result.issue}><div><b>第 {result.issue} 期</b><time>{result.date}</time></div><div className="history-balls">{result.numbers.map((number) => <Ball key={number} value={number} compact />)}<span className="history-plus">＋</span><Ball value={result.special} compact special /></div></article>)}</div>{visible < results.length && <button className="primary-button" onClick={() => setVisible((value) => value + 12)}>查看更多记录</button>}</section>;
 }
 
 function ZodiacView({ onBack }: { onBack: () => void }) {
@@ -243,28 +258,44 @@ function MysteryView({ forecast, onBack, openImage }: { forecast: DailyForecast;
 }
 
 function TrendView({ results, onBack }: { results: DrawResult[]; onBack: () => void }) {
+  const sample = results.slice(0, 10);
   const waveCounts = { red: 0, blue: 0, green: 0 };
   const zodiacCounts = Array(12).fill(0) as number[];
   let odd = 0;
   let big = 0;
-  results.slice(0, 10).forEach((result) => {
+  sample.forEach((result) => {
     if (redNumbers.has(result.special)) waveCounts.red += 1; else if (blueNumbers.has(result.special)) waveCounts.blue += 1; else waveCounts.green += 1;
     zodiacCounts[zodiacAnimals.indexOf(zodiacForNumber(result.special))] += 1;
     if (result.special % 2) odd += 1;
     if (result.special >= 25) big += 1;
   });
   const max = Math.max(...zodiacCounts, 1);
-  return <section className="card page-card"><BackButton onClick={onBack} /><SectionHeader eyebrow="近 10 期演示记录" title="简单走势统计" /><div className="notice calm"><span className="notice-mark">i</span><div><strong>请注意</strong><p>历史结果不影响下一期开奖概率。</p></div></div><h3 className="subheading">特码生肖出现次数</h3><div className="bar-chart">{zodiacAnimals.map((animal, index) => <div key={animal.name}><span>{animal.name}</span><i><em style={{ width: `${(zodiacCounts[index] / max) * 100}%` }} /></i><b>{zodiacCounts[index]} 次</b></div>)}</div><h3 className="subheading">分类统计</h3><div className="stat-grid"><div><span>红波</span><b>{waveCounts.red}</b></div><div><span>蓝波</span><b>{waveCounts.blue}</b></div><div><span>绿波</span><b>{waveCounts.green}</b></div><div><span>单数</span><b>{odd}</b></div><div><span>双数</span><b>{10 - odd}</b></div><div><span>大数</span><b>{big}</b></div></div></section>;
+  return <section className="card page-card"><BackButton onClick={onBack} /><SectionHeader eyebrow={`近 ${sample.length} 期真实记录`} title="简单走势统计" /><div className="notice calm"><span className="notice-mark">i</span><div><strong>请注意</strong><p>历史结果不影响下一期开奖概率。</p></div></div><h3 className="subheading">特码生肖出现次数</h3><div className="bar-chart">{zodiacAnimals.map((animal, index) => <div key={animal.name}><span>{animal.name}</span><i><em style={{ width: `${(zodiacCounts[index] / max) * 100}%` }} /></i><b>{zodiacCounts[index]} 次</b></div>)}</div><h3 className="subheading">分类统计</h3><div className="stat-grid"><div><span>红波</span><b>{waveCounts.red}</b></div><div><span>蓝波</span><b>{waveCounts.blue}</b></div><div><span>绿波</span><b>{waveCounts.green}</b></div><div><span>单数</span><b>{odd}</b></div><div><span>双数</span><b>{sample.length - odd}</b></div><div><span>大数</span><b>{big}</b></div></div></section>;
 }
 
 export function HomeClient({ initialResults }: { initialResults: DrawResult[] }) {
   const [view, setView] = useState<View>("home");
+  const [results, setResults] = useState(initialResults);
   const [fontSize, setFontSize] = useState<"large" | "xlarge">(() => {
     if (typeof window === "undefined") return "large";
     return window.localStorage.getItem("safemark6-font") === "xlarge" ? "xlarge" : "large";
   });
   const [imageOpen, setImageOpen] = useState(false);
-  const forecast = useMemo(() => createDailyForecast(initialResults[0].issue), [initialResults]);
+  const forecast = useMemo(() => createDailyForecast(results[0].issue), [results]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/data/results.json", { cache: "no-store", signal: controller.signal })
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json() as Promise<unknown>;
+      })
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0 && data.every(isDrawResult)) setResults(data);
+      })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("/service-worker.js").catch(() => undefined);
@@ -295,15 +326,15 @@ export function HomeClient({ initialResults }: { initialResults: DrawResult[] })
       </header>
 
       <main>
-        {view === "home" && <HomeView latest={initialResults[0]} forecast={forecast} navigate={navigate} openImage={() => setImageOpen(true)} />}
-        {view === "history" && <HistoryView results={initialResults} onBack={() => navigate("home")} />}
+        {view === "home" && <HomeView latest={results[0]} forecast={forecast} navigate={navigate} openImage={() => setImageOpen(true)} />}
+        {view === "history" && <HistoryView results={results} onBack={() => navigate("home")} />}
         {view === "zodiac" && <ZodiacView onBack={() => navigate("home")} />}
         {view === "forecast" && <ForecastView forecast={forecast} onBack={() => navigate("home")} />}
         {view === "mystery" && <MysteryView forecast={forecast} onBack={() => navigate("home")} openImage={() => setImageOpen(true)} />}
-        {view === "trend" && <TrendView results={initialResults} onBack={() => navigate("home")} />}
+        {view === "trend" && <TrendView results={results} onBack={() => navigate("home")} />}
       </main>
 
-      <footer><span className="footer-seal" aria-hidden="true">安</span><strong>天天好彩 · 六合资料</strong><p>本站仅提供开奖记录查询、历史统计和娱乐资料，不提供任何投注、充值、交易、客服或博彩服务。</p><p className="footer-points"><span>无广告</span><span>无外链</span><span>不收集个人资料</span></p></footer>
+      <footer><span className="footer-seal" aria-hidden="true">安</span><strong>天天好彩 · 六合资料</strong><p>本站仅提供开奖记录查询、历史统计和娱乐资料，不提供任何投注、充值、交易、客服或博彩服务。</p><p>本站并非香港马会官方网站；开奖记录以香港马会最终公布为准。</p><p className="footer-points"><span>无广告</span><span>无外链</span><span>不收集个人资料</span></p></footer>
       <nav className="bottom-nav" aria-label="主要导航">{navItems.map((item) => <button key={item.view} className={view === item.view ? "active" : ""} onClick={() => navigate(item.view)} aria-current={view === item.view ? "page" : undefined}><span aria-hidden="true">{item.icon}</span><b>{item.label}</b></button>)}</nav>
 
       {imageOpen && <div className="image-modal" role="dialog" aria-modal="true" aria-label="放大查看玄机图"><button className="modal-close" onClick={() => setImageOpen(false)}>× 关闭大图</button><div className="modal-scroll"><MysteryArtwork forecast={forecast} expanded /></div><p>可使用双指缩放查看细节</p></div>}

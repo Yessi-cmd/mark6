@@ -307,6 +307,20 @@ main {
 
 .draw-meta span { color: #665a43; text-align: right; }
 
+.verified-dot {
+  width: 23px;
+  height: 23px;
+  margin-right: 5px;
+  display: inline-grid;
+  place-items: center;
+  color: #fff;
+  background: var(--green-800);
+  border-radius: 50%;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 900;
+}
+
 .draw-grid {
   padding: 30px 2px 24px;
   display: grid;
