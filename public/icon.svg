@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#174f3d"/>
+  <circle cx="256" cy="256" r="178" fill="none" stroke="#e2c367" stroke-width="20"/>
+  <circle cx="256" cy="256" r="145" fill="#f7f1da"/>
+  <path d="M256 98c18 57 60 90 126 101-49 39-73 84-72 135-50-21-91-21-108 0 1-51-23-96-72-135 66-11 108-44 126-101Z" fill="#2d7355" opacity=".18"/>
+  <text x="256" y="304" text-anchor="middle" font-family="serif" font-size="158" font-weight="700" fill="#174f3d">安</text>
+</svg>

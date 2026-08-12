@@ -1,0 +1,15 @@
+{
+  "name": "天天好彩 · 安全六合资料",
+  "short_name": "天天好彩",
+  "description": "面向长者的大字版安全六合资料站",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f2f0e6",
+  "theme_color": "#174f3d",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
