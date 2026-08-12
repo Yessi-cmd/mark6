@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://mark6.norliva.top"),
   title: "天天好彩｜安全干净的六合资料站",
   description: "面向长者的大字版六合资料与历史记录查询站。无广告、无支付、无外链。",
   manifest: "/manifest.webmanifest",

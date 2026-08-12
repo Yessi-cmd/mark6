@@ -1,0 +1,25 @@
+mark6.norliva.top {
+	root * /var/www/mark6.norliva.top/current
+	encode zstd gzip
+
+	header {
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'self'; worker-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=()"
+		Referrer-Policy "no-referrer"
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+	}
+
+	@entry path / /index.html
+	header @entry Cache-Control "no-cache"
+
+	@immutable path /_next/static/*
+	header @immutable Cache-Control "public, max-age=31536000, immutable"
+
+	@share path /icon.svg /og.png /manifest.webmanifest /service-worker.js
+	header @share Cache-Control "public, max-age=86400"
+
+	try_files {path} /index.html
+	file_server
+}
