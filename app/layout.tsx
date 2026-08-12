@@ -12,18 +12,18 @@ export const metadata: Metadata = {
     title: "天天好彩｜安全干净的六合资料站",
     description: "大字、无广告、无支付、无外链。",
     type: "website",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "天天好彩：安全、干净、看得清" }],
+    images: [{ url: "/og-v2.png", width: 1200, height: 630, alt: "天天好彩：安全、干净、看得清" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "天天好彩｜安全干净的六合资料站",
     description: "大字、无广告、无支付、无外链。",
-    images: ["/og.png"],
+    images: ["/og-v2.png"],
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#174f3d",
+  themeColor: "#0d3b2d",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,

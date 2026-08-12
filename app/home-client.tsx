@@ -19,11 +19,11 @@ type DailyForecast = {
 };
 
 const navItems: { view: View; icon: string; label: string }[] = [
-  { view: "home", icon: "⌂", label: "首页" },
-  { view: "history", icon: "◷", label: "开奖" },
-  { view: "zodiac", icon: "◎", label: "生肖" },
-  { view: "forecast", icon: "福", label: "资料" },
-  { view: "trend", icon: "↗", label: "走势" },
+  { view: "home", icon: "首", label: "首页" },
+  { view: "history", icon: "开", label: "开奖" },
+  { view: "zodiac", icon: "肖", label: "生肖" },
+  { view: "forecast", icon: "参", label: "资料" },
+  { view: "trend", icon: "势", label: "走势" },
 ];
 
 const redNumbers = new Set([1, 2, 7, 8, 12, 13, 18, 19, 23, 24, 29, 30, 34, 35, 40, 45, 46]);
@@ -110,7 +110,7 @@ function zodiacNumbers(index: number) {
 
 function Ball({ value, special = false, compact = false }: { value: number; special?: boolean; compact?: boolean }) {
   return (
-    <span className={`number-ball ${numberColor(value)}${special ? " special" : ""}${compact ? " compact" : ""}`}>
+    <span className={`number-ball ${numberColor(value)}${special ? " special" : ""}${compact ? " compact" : ""}`} aria-label={`${special ? "特码" : "号码"} ${value}`}>
       {String(value).padStart(2, "0")}
     </span>
   );
@@ -129,13 +129,13 @@ function SectionHeader({ eyebrow, title, action }: { eyebrow?: string; title: st
 }
 
 function BackButton({ onClick }: { onClick: () => void }) {
-  return <button className="back-button" onClick={onClick}>← 返回首页</button>;
+  return <button className="back-button" onClick={onClick}><span aria-hidden="true">‹</span> 返回首页</button>;
 }
 
 function Notice() {
   return (
     <div className="notice" role="note">
-      <span className="notice-mark">!</span>
+      <span className="notice-mark" aria-hidden="true">娱</span>
       <div><strong>娱乐资料说明</strong><p>以下内容由固定规则随机生成，不代表真实预测能力，请理性阅读。</p></div>
     </div>
   );
@@ -164,8 +164,11 @@ function HomeView({ latest, forecast, navigate, openImage }: { latest: DrawResul
   return (
     <>
       <section className="hero card" id="draw">
-        <SectionHeader eyebrow="示例开奖记录" title={`第 ${latest.issue} 期`} action={<span className="date-chip">{latest.date}</span>} />
-        <p className="source-note">演示数据 · 接入经校验的开奖源后可自动更新</p>
+        <SectionHeader eyebrow="开奖速览" title="最新开奖记录" action={<span className="date-chip">{latest.date}</span>} />
+        <div className="draw-meta">
+          <strong>第 {latest.issue} 期</strong>
+          <span>演示数据 · 待接入经校验的开奖源</span>
+        </div>
         <div className="draw-grid">
           <div className="regular-numbers" aria-label="六个正码">
             {latest.numbers.map((number) => <div className="ball-wrap" key={number}><Ball value={number} /><span>{zodiacForNumber(number).name}</span></div>)}
@@ -173,7 +176,7 @@ function HomeView({ latest, forecast, navigate, openImage }: { latest: DrawResul
           <span className="plus">＋</span>
           <div className="special-wrap"><div className="ball-wrap"><Ball value={latest.special} special /><span>{specialZodiac.emoji} {specialZodiac.name}</span></div><b>特码</b></div>
         </div>
-        <button className="primary-button" onClick={() => navigate("history")}>查看全部开奖记录 <span>›</span></button>
+        <button className="primary-button" onClick={() => navigate("history")}>查看全部开奖记录 <span aria-hidden="true">›</span></button>
       </section>
 
       <section className="card forecast-card" id="forecast">
@@ -193,12 +196,12 @@ function HomeView({ latest, forecast, navigate, openImage }: { latest: DrawResul
           <div><span>波色参考</span><strong className={`wave ${forecast.wave === "红波" ? "red-text" : forecast.wave === "蓝波" ? "blue-text" : "green-text"}`}>● {forecast.wave}</strong></div>
           <div><span>尾数参考</span><strong>{forecast.tails.join(" · ")}</strong></div>
         </div>
-        <button className="text-button" onClick={() => navigate("forecast")}>查看完整今日资料 <span>›</span></button>
+        <button className="text-button" onClick={() => navigate("forecast")}>查看完整今日资料 <span aria-hidden="true">›</span></button>
       </section>
 
       <section className="card mystery-card" id="mystery">
         <SectionHeader eyebrow="每日一图" title="今日玄机图" action={<button className="plain-action" onClick={() => navigate("mystery")}>查看解读</button>} />
-        <button className="image-button" onClick={openImage} aria-label="放大查看今日玄机图"><MysteryArtwork forecast={forecast} /><span className="zoom-hint">⌕ 点击图片，放大查看</span></button>
+        <button className="image-button" onClick={openImage} aria-label="放大查看今日玄机图"><MysteryArtwork forecast={forecast} /><span className="zoom-hint"><b aria-hidden="true">＋</b> 点击图片，放大查看</span></button>
       </section>
 
       <section className="card poem-card">
@@ -236,7 +239,7 @@ function ForecastView({ forecast, onBack }: { forecast: DailyForecast; onBack: (
 }
 
 function MysteryView({ forecast, onBack, openImage }: { forecast: DailyForecast; onBack: () => void; openImage: () => void }) {
-  return <section className="card page-card"><BackButton onClick={onBack} /><SectionHeader eyebrow="每日一图" title="玄机图解读" /><button className="image-button" onClick={openImage}><MysteryArtwork forecast={forecast} expanded /><span className="zoom-hint">⌕ 点击图片，放大查看</span></button><div className="interpretation"><h3>观图提示</h3><p>画中取山、水、桥与生肖意象，以传统码书形式呈现。今日图中出现的生肖为 <strong>{forecast.zodiacs.slice(0, 3).map((index) => zodiacAnimals[index].name).join("、")}</strong>，数字印记为 <strong>{forecast.mysteryNumber}</strong>。</p><p>图文均为娱乐随机资料，不具备预测未来开奖结果的能力。</p></div></section>;
+  return <section className="card page-card"><BackButton onClick={onBack} /><SectionHeader eyebrow="每日一图" title="玄机图解读" /><button className="image-button" onClick={openImage} aria-label="放大查看今日玄机图"><MysteryArtwork forecast={forecast} expanded /><span className="zoom-hint"><b aria-hidden="true">＋</b> 点击图片，放大查看</span></button><div className="interpretation"><h3>观图提示</h3><p>画中取山、水、桥与生肖意象，以传统码书形式呈现。今日图中出现的生肖为 <strong>{forecast.zodiacs.slice(0, 3).map((index) => zodiacAnimals[index].name).join("、")}</strong>，数字印记为 <strong>{forecast.mysteryNumber}</strong>。</p><p>图文均为娱乐随机资料，不具备预测未来开奖结果的能力。</p></div></section>;
 }
 
 function TrendView({ results, onBack }: { results: DrawResult[]; onBack: () => void }) {
@@ -285,10 +288,10 @@ export function HomeClient({ initialResults }: { initialResults: DrawResult[] })
     <div className="site-shell">
       <header className="site-header">
         <div className="header-inner">
-          <button className="brand" onClick={() => navigate("home")} aria-label="返回天天好彩首页"><span className="brand-mark"><i /><b>安</b></span><span><strong>天天好彩</strong><small>安全 · 干净 · 看得清</small></span></button>
+          <button className="brand" onClick={() => navigate("home")} aria-label="返回天天好彩首页"><span className="brand-mark" aria-hidden="true"><i /><b>安</b></span><span className="brand-copy"><strong>天天好彩</strong><small>六合资料 · 安心阅读</small></span></button>
           <div className="font-control" aria-label="字体大小"><span>字号</span><button className={fontSize === "large" ? "active" : ""} onClick={() => setFontSize("large")} aria-pressed={fontSize === "large"}>大</button><button className={fontSize === "xlarge" ? "active" : ""} onClick={() => setFontSize("xlarge")} aria-pressed={fontSize === "xlarge"}>特大</button></div>
         </div>
-        <div className="safety-line"><span>✓</span> 本站仅供娱乐参考，不提供投注、充值或交易服务</div>
+        <div className="safety-line"><span aria-hidden="true">✓</span><strong>安心提示</strong><p>仅供娱乐参考，不提供投注、充值或交易服务</p></div>
       </header>
 
       <main>
@@ -300,8 +303,8 @@ export function HomeClient({ initialResults }: { initialResults: DrawResult[] })
         {view === "trend" && <TrendView results={initialResults} onBack={() => navigate("home")} />}
       </main>
 
-      <footer><strong>天天好彩 · 六合资料</strong><p>本站仅提供开奖记录查询、历史统计和娱乐资料，不提供任何投注、充值、交易、客服或博彩服务。</p><p>无广告 · 无外链 · 不收集个人资料</p></footer>
-      <nav className="bottom-nav" aria-label="主要导航">{navItems.map((item) => <button key={item.view} className={view === item.view ? "active" : ""} onClick={() => navigate(item.view)} aria-current={view === item.view ? "page" : undefined}><span>{item.icon}</span><b>{item.label}</b></button>)}</nav>
+      <footer><span className="footer-seal" aria-hidden="true">安</span><strong>天天好彩 · 六合资料</strong><p>本站仅提供开奖记录查询、历史统计和娱乐资料，不提供任何投注、充值、交易、客服或博彩服务。</p><p className="footer-points"><span>无广告</span><span>无外链</span><span>不收集个人资料</span></p></footer>
+      <nav className="bottom-nav" aria-label="主要导航">{navItems.map((item) => <button key={item.view} className={view === item.view ? "active" : ""} onClick={() => navigate(item.view)} aria-current={view === item.view ? "page" : undefined}><span aria-hidden="true">{item.icon}</span><b>{item.label}</b></button>)}</nav>
 
       {imageOpen && <div className="image-modal" role="dialog" aria-modal="true" aria-label="放大查看玄机图"><button className="modal-close" onClick={() => setImageOpen(false)}>× 关闭大图</button><div className="modal-scroll"><MysteryArtwork forecast={forecast} expanded /></div><p>可使用双指缩放查看细节</p></div>}
     </div>
