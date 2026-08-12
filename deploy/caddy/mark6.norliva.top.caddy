@@ -17,7 +17,7 @@ mark6.norliva.top {
 	@immutable path /_next/static/*
 	header @immutable Cache-Control "public, max-age=31536000, immutable"
 
-	@share path /icon.svg /og.png /manifest.webmanifest /service-worker.js
+	@share path /icon.svg /og.png /og-v2.png /manifest.webmanifest /service-worker.js
 	header @share Cache-Control "public, max-age=86400"
 
 	try_files {path} /index.html
